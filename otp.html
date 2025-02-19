@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <link rel="stylesheet" href="otp.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Back button to redirect to the Forget Password page -->
+        <a href="forgetpassword.html">
+            <button class="back-btn">←</button>
+        </a>
+        
+        <!-- OTP Email Verification Section -->
+        <div class="icon">✦</div>
+        <h2>Please check your email</h2>
+        <p>We've sent a code to <strong>helloworld@gmail.com</strong></p>
+
+        <div class="otp-inputs">
+            <input type="text" maxlength="1" id="otp1" oninput="moveToNext(this, 'otp2')">
+            <input type="text" maxlength="1" id="otp2" oninput="moveToNext(this, 'otp3')">
+            <input type="text" maxlength="1" id="otp3" oninput="moveToNext(this, 'otp4')">
+            <input type="text" maxlength="1" id="otp4">
+        </div>
+
+        <!-- Form to handle redirection after OTP verification -->
+        <form action="reset.html" method="GET">
+            <button type="submit" id="verify-btn">Verify</button>
+        </form>
+
+        <!-- Resend Timer -->
+        <p id="resend-text">Send code again <span id="timer">00:20</span></p>
+    </div>
+</body>
+</html>

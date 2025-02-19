@@ -1,0 +1,64 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="logo">✦</div>
+            <h2>Sign up</h2>
+            <form>
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="example@gmail.com">
+
+                <label for="password">Create a password</label>
+                <div class="password-container">
+                    <input type="password" id="password" placeholder="Must be 8 characters">
+                    <span class="toggle-password" onclick="togglePassword('password', this)">👁️</span>
+                </div>
+
+                <label for="confirmPassword">Confirm password</label>
+                <div class="password-container">
+                    <input type="password" id="confirmPassword" placeholder="Repeat password">
+                    <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">👁️</span>
+                </div>
+
+                <div class="toggle-group">
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="toggle-text">
+                        <strong>Daily reports</strong>
+                        <p>Get a daily activity report via email.</p>
+                    </div>
+                </div>
+
+                <div class="toggle-group">
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <div class="toggle-text">
+                        <strong>Weekly summary</strong>
+                        <p>Get a weekly activity report via email.</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn">Log in</button>
+            </form>
+
+            <p class="login-link">Already have an account? <a href="login.html">Log in</a></p>
+        </div>
+        <div class="right-panel">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9KwbIFeFekL1EXPAF9msw5P6eMksyWcYRAqUYbipFPBASa7ngiCVBLzn5AduNZ2rJOmE&usqp=CAU" alt="Futuristic AI" />
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

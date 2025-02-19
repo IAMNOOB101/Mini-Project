@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+    <link rel="stylesheet" href="reset.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Add anchor tag to wrap the back button for redirection -->
+        <a href="otp.html">
+            <button class="back-btn">←</button>
+        </a>
+        <div class="icon">✦</div>
+        <h2>Reset password</h2>
+        <p>Please type something you'll remember</p>
+
+        <form id="resetForm">
+            <label for="newPassword">New password</label>
+            <div class="password-container">
+                <input type="password" id="newPassword" placeholder="Must be 8 characters">
+                <span class="toggle-password" onclick="togglePassword('newPassword', this)">👁️</span>
+            </div>
+
+            <label for="confirmPassword">Confirm new password</label>
+            <div class="password-container">
+                <input type="password" id="confirmPassword" placeholder="Repeat password">
+                <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">👁️</span>
+            </div>
+
+            <button type="submit" id="reset-btn">Reset password</button>
+        </form>
+
+        <p class="login-text">Already have an account? <a href="login.html">Log in</a></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

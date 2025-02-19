@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal Login</title>
+    <link rel="stylesheet" href="login.css">
+    <script>
+        // Password visibility toggle function
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const passwordIcon = document.querySelector('.toggle-password');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text'; // Show password
+                passwordIcon.textContent = '🙈'; // Change icon to 'hide' (🙈)
+            } else {
+                passwordField.type = 'password'; // Hide password
+                passwordIcon.textContent = '👁️'; // Change icon back to 'show' (👁️)
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="login-section">
+            <h2>Login</h2>
+            <p>Enter your account details</p>
+            <form id="loginForm">
+                <input type="text" id="username" placeholder="User name" required>
+                <div class="password-container">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <span class="toggle-password" onclick="togglePassword()">👁️</span>
+                </div>
+                <a href="forgetpassword.html" class="forgot">Forgot Password?</a>
+                <!-- Login Button -->
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+            <p>Don't have an account? <a href="signup.html" class="signup-btn">Sign up</a></p>
+        </div>
+        <div class="image-section">
+            <h1>Welcome to <br> Interview Prep</h1>
+            <p>Login to access your account</p>
+            <img src="https://s3-alpha-sig.figma.com/img/6e97/5f04/884e18524ff24634164f915d0cd4479b?Expires=1740355200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dIxTGJSX0p01tsxFmV4mkE2Og9KZYrbZzUfU2b6x6ShReFEJ1aZ0RCGF7aVF7~gRj6pKAn9noG2Ghwln7-s79F8F7ZiR7MoTqyiZ5MZvbuKpxFN9OkRmsgWWmMeoqv-6agnIvPRb4kVWQBsimmXpixkRo5F7p6e~~mJDUIiwpYVOCrc2XY08FLFn-BQx~X8p38OK8k7B-M7YL2SVjyAiUeitoDnlYlbhYimbbItCkCJOfiP-F9Q6qzNO7yQaj1W7~A9lleqssYMQR6MsAuaNY9XAK3MyWEzUHd5uZx4W2thgWx73ck-iMyrROi6IbVoGgMBcoSRuluOr3PpC9LjUKg__"alt="illustration">
+        </div>
+    </div>
+    
+</body>
+</html>
