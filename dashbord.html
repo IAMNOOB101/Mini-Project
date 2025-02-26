@@ -1,0 +1,65 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MockMate Dashboard</title>
+    <link rel="stylesheet" href="dashbord.css">
+    <script defer src="dashbord.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile">
+            <img src="user.png" alt="Profile Picture">
+            <span>Username</span>
+        </div>
+        <ul>
+            <li class="active"><a href="dashbord.html">🏠 Dashboard</a></li>
+            <li><a href="interview1.html">💼Interview</a></li>
+            <li><span>📂</span> Document Centre</li>
+            <li><span>📚</span> Preparation Hub</li>
+            <li><span>📁</span> My Portfolio</li>
+        </ul>
+        <button class="logout-btn">🚪 Logout</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-bar">
+            <h2>MockMate</h2>
+            <input type="text" placeholder="🔍 Ask any question..." class="search-bar">
+            <button class="toggle-theme">🌙</button>
+        </div>
+
+        <div class="content">
+            <!-- Left Side - Text Box -->
+            <div class="text-box">
+                <p>
+                    💡 Preparing for interviews has never been easier with the power of AI. 
+                    Whether you're gearing up for technical rounds, behavioral interviews, or aptitude tests, 
+                    AI tools provide personalized feedback, simulate interview scenarios, and highlight areas for improvement.
+                </p>
+                <p>
+                    🚀 AI-driven solutions ensure you're confident and ready to ace any interview. 
+                    Leverage AI to elevate your preparation with personalized feedback and real-time practice sessions.
+                </p>
+            </div>
+
+            <!-- Right Side - Image -->
+            <div class="image-box">
+                <img src="dashbord.png" alt="Interview Preparation">
+            </div>
+        </div>
+
+        <!-- Resume Upload Section -->
+        <div class="resume-upload">
+            <label for="resume-upload" class="resume-btn">📄 Add Resume</label>
+            <input type="file" id="resume-upload" hidden>
+        </div>
+    </div>
+
+</body>
+</html>
+
