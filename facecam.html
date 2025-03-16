@@ -1,0 +1,66 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MockMate - Interview</title>
+    <link rel="stylesheet" href="facecam.css">
+    <script defer src="facecam.js"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="profile-section">
+            <img src="user.png" alt="Profile" class="profile-pic">
+            <span class="profile-name">username</span>
+        </div>
+        <div class="logo">MockMate</div>
+        <div class="search-bar">
+            <input type="text" placeholder="Ask any question...">
+            <button>🔍</button>
+        </div>
+    </nav>
+
+    <!-- Sidebar + Main Content -->
+    <div class="main-container">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul>
+                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="interview.html" class="active">📝 Interview</a></li>
+                <li><a href="document.html">📂 Document Centre</a></li>
+                <li><a href="preparationhub.html">📚 Preparation Hub</a></li>
+                <li><a href="portfolio.html">💼 My Portfolio</a></li>
+                <li><a href="login.html" class="logout">🚪 Logout</a></li>
+            </ul>
+        </aside>
+
+        <!-- Interview Section -->
+        <div class="interview-container">
+            <h2>Facecam & Voice Recognition</h2>
+            <p>Interact with the webcam and talk to the website.</p>
+
+            <!-- Webcam Preview -->
+            <div class="webcam-container">
+                <video id="webcam" autoplay></video>
+                <div class="controls">
+                    <button id="mic-btn">🎤</button>
+                    <button id="camera-btn">📷</button>
+                    <button id="menu-btn">☰</button>
+                </div>
+            </div>
+
+            <!-- Voice Recognition Section -->
+            <div class="voice-container">
+                <button id="start-voice">Start Voice Recognition</button>
+                <p id="speech-text">Your speech will appear here</p>
+            </div>
+
+            <button class="start-btn">Start</button>
+        </div>
+    </div>
+
+</body>
+</html>

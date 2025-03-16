@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MockMate Interview</title>
+    <link rel="stylesheet" href="interview1.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">MockMate</div>
+        <div class="search-bar">
+            <input type="text" placeholder="Ask any question..." id="search">
+            <button id="search-btn">🔍</button>
+        </div>
+        <div class="profile-section">
+            <img src="user.png" alt="Profile" class="profile-pic">
+            <span class="profile-name">username</span>
+        </div>
+    </nav>
+
+    <!-- Sidebar + Main Content -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul>
+                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="#" class="active">📝 Interview</a></li>
+                <li><a href="document.html">📂 Document Centre</a></li>
+                <li><a href="preparationhub.html">📚 Preparation Hub</a></li>
+                <li><a href="portfolio.html">💼 My Portfolio</a></li>
+                <li><a href="login.html" class="logout">🚪 Logout</a></li>
+            </ul>
+        </aside>
+
+        <!-- Interview Form -->
+        <div class="container">
+            <h2>Start Your Next Interview</h2>
+
+            <label for="resume">Resume (Optional)</label>
+            <input type="file" id="resume">
+
+            <label for="role">Role (Optional)</label>
+            <select id="role">
+                <option value="">Select your Role</option>
+                <option value="developer">Developer</option>
+                <option value="designer">Designer</option>
+            </select>
+
+            <label for="knowledge">Select Knowledge Domain (Optional)</label>
+            <select id="knowledge">
+                <option value="general">General</option>
+                <option value="technical">Technical</option>
+            </select>
+
+            <label for="interviewType">Interview Type (Optional)</label>
+            <select id="interviewType">
+                <option value="general">General</option>
+                <option value="technical">Technical</option>
+            </select>
+
+            <h3>Schedule your interview</h3>
+            <div class="schedule-buttons">
+                <button id="immediate" class="active">Immediately</button>
+                <button id="set-time">Set Date and Time</button>
+            </div>
+
+            <div id="date-time-picker" class="hidden">
+                <label for="date">Pick a date</label>
+                <input type="date" id="date">
+
+                <label for="time">Select your time</label>
+                <input type="time" id="time">
+            </div>
+
+            <div class="action-buttons">
+                <button id="cancel">Cancel</button>
+                <button id="save">Save for Later</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="interview1.js"></script>
+</body>
+</html>
