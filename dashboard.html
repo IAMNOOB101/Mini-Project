@@ -1,4 +1,5 @@
- <!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,35 +9,35 @@
     <script defer src="dashboard.js"></script>
 </head>
 <body>
-
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="profile">
             <img src="user.png" alt="Profile Picture">
-            <span>Username</span>
+            <span id="sidebar-username">Username</span>
+            <!-- <span>Username</span> This will be updated by dashboard.js -->
+          
         </div>
         <ul>
-            <li class="active"><a href="dashboard.html">🏠 Dashboard</a></li>
-            <li><a href="interview1.html">💼Interview</a></li>
-            <li><a href="document.html">📂Document Centre</a></li>
-            <li><a href="preparationhub.html"><span>📚</span>Preparation Hub</a></li>
-            <li><a href="portfolio.html"><span>📁</span> My Portfolio</a></li>
+            <li><a href="dashboard.html">📊 Dashboard</a></li>
+            <li><a href="interview1.html">💼 Interview</a></li>
+            <li><a href="document.html">📂 Document Centre</a></li>
+            <li><a href="preparationhub.html">📚 Preparation Hub</a></li>
+            <li><a href="portfolio.html">🖼️ My Portfolio</a></li>
         </ul>
-        <a href="login.html">
-        <button class="logout-btn">🚪 Logout</button>
+        <a href="login.html"> 
+            <button class="logout-btn">🚪 Logout</button>
         </a>
-        </div>
+    </div>
 
     <!-- Main Content -->
     <div class="main-content">
         <div class="top-bar">
             <h2>MockMate</h2>
-            <input type="text" placeholder="🔍 Ask any question..." class="search-bar">
-            <button class="toggle-theme">🌙</button>
+             <input type="text" placeholder="🔍 Ask any question..." class="search-bar"> 
+            <!-- <button class="toggle-theme">🌙</button> -->
         </div>
 
         <div class="content">
-            <!-- Left Side - Text Box -->
             <div class="text-box">
                 <p>
                     💡 Preparing for interviews has never been easier with the power of AI. 
@@ -47,21 +48,28 @@
                     🚀 AI-driven solutions ensure you're confident and ready to ace any interview. 
                     Leverage AI to elevate your preparation with personalized feedback and real-time practice sessions.
                 </p>
+                <p>
+                    🎯 AI analyzes your responses to identify patterns and suggest targeted improvements, 
+                    helping you refine your communication skills and technical knowledge.
+                </p>
+                <p>
+                    ⏱️ Save time with smart interview preparation that adapts to your schedule and learning pace, 
+                    providing efficient practice sessions whenever you're available.
+                </p>
+                <p>
+                    🌐 Experience global interview standards with AI that understands regional variations and company-specific expectations, 
+                    preparing you for both local and international opportunities.
+                </p>
+                <p>
+                    📈 Track your progress over time with detailed analytics and performance metrics to see exactly how you're improving 
+                    across different interview dimensions.
+                </p>
             </div>
-
             <!-- Right Side - Image -->
             <div class="image-box">
                 <img src="dashbord.png" alt="Interview Preparation">
             </div>
         </div>
-
-        <!-- Resume Upload Section -->
-        <div class="resume-upload">
-            <label for="resume-upload" class="resume-btn">📄 Add Resume</label>
-            <input type="file" id="resume-upload" hidden>
         </div>
-    </div>
-
 </body>
 </html>
-

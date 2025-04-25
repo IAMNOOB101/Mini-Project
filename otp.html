@@ -1,37 +1,38 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verification</title>
+    <title>Verify OTP</title>
     <link rel="stylesheet" href="otp.css">
 </head>
 <body>
     <div class="container">
-        <!-- Back button to redirect to the Forget Password page -->
-        <a href="forgetpassword.html">
-            <button class="back-btn">←</button>
-        </a>
-        
-        <!-- OTP Email Verification Section -->
-        <div class="icon">✦</div>
-        <h2>Please check your email</h2>
-        <p>We've sent a code to <strong>helloworld@gmail.com</strong></p>
-
-        <div class="otp-inputs">
-            <input type="text" maxlength="1" id="otp1" oninput="moveToNext(this, 'otp2')">
-            <input type="text" maxlength="1" id="otp2" oninput="moveToNext(this, 'otp3')">
-            <input type="text" maxlength="1" id="otp3" oninput="moveToNext(this, 'otp4')">
-            <input type="text" maxlength="1" id="otp4">
+        <div class="card">
+            <a href="forgetpassword.html" class="back-button">&#8592; Back</a>
+            <h2>Verify OTP</h2>
+            <p>Enter the 4-digit code sent to your email</p>
+            
+            <form id="otpForm">
+                <input type="hidden" id="email" value="">
+                <div class="otp-inputs">
+                    <input type="text" id="digit1" maxlength="1" pattern="\d" required>
+                    <input type="text" id="digit2" maxlength="1" pattern="\d" required>
+                    <input type="text" id="digit3" maxlength="1" pattern="\d" required>
+                    <input type="text" id="digit4" maxlength="1" pattern="\d" required>
+                </div>
+                
+                <button type="submit" class="verify-btn" id="verify-btn">Verify</button>
+                <button type="button" class="resend-btn" id="resend-btn">Resend OTP</button>
+                
+                <p id="message"></p> <!-- For success/error messages -->
+            </form>
+            
+            <p class="login-link">Remember your password? <a href="login.html">Log in</a></p>
         </div>
-
-        <!-- Form to handle redirection after OTP verification -->
-        <form action="reset.html" method="GET">
-            <button type="submit" id="verify-btn">Verify</button>
-        </form>
-
-        <!-- Resend Timer -->
-        <p id="resend-text">Send code again <span id="timer">00:20</span></p>
     </div>
+
+    <script src="otp.js"></script>
 </body>
 </html>
