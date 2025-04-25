@@ -3,36 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="portfolio.css" rel="stylesheet">
+    <title>MockMate - Interview Portfolio</title>
+    <link rel="stylesheet" href="portfolio.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-      
-     <div class="sidebar">
-        <div class="profile">
-            <img src="user.png" alt="Profile Picture">
-            <span>Username</span>
+    <div class="interview-container">
+        <!-- Sidebar (matches dashboard.html) -->
+        <div class="sidebar">
+            <div class="profile">
+                <img src="user.png" alt="Profile Picture">
+                <span id="user-email">user@example.com</span>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="interview1.html">💼 Interview</a></li>
+                <li><a href="document.html">📂 Document Centre</a></li>
+                <li><a href="preparationhub.html">📚 Preparation Hub</a></li>
+                <li><a href="portfolio.html">🖼️ My Portfolio</a></li>
+            </ul>
+            <button class="logout-btn" id="logout-btn">🚪 Logout</button>
         </div>
-    <ul>
-        <li><a href="dashboard.html">📊 Dashboard</a></li>
-        <li><a href="interview1.html">💼 Interview</a></li>
-        <li class="active"><a href="document.html">📂 Document Centre</a></li>
-        <li><a href="preparationhub.html">📚 Preparation Hub</a></li>
-        <li><a href="portfolio.html">🖼️ My Portfolio</a></li>
-    </ul>
-    <a href="login.html">
-    <button class="logout-btn">🚪 Logout</button>
-    </a>
-     </div>
-    
-     <div class="main-content">
-        <div class="top-bar">
-            <h2>MockMate</h2>
-            <input type="text" placeholder="🔍 Ask any question..." class="search-bar">
-            <button class="toggle-theme">🌙</button>
-        </div>
-        </div>
-    </body>
-</html>  
 
+        <!-- Main Content -->
+        <div class="interview-panel">
+            <div class="question-container">
+                <h3>Your Performance</h3>
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="card-icon bg-primary">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="card-content">
+                            <h4>Average Score</h4>
+                            <span id="avg-score">0%</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon bg-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="card-content">
+                            <h4>Correct Answers</h4>
+                            <span id="correct-answers">0/0</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon bg-warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="card-content">
+                            <h4>Avg. Time</h4>
+                            <span id="avg-time">0s</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="answer-container">
+                <h3>Focus Analysis</h3>
+                <div class="chart-container">
+                    <canvas id="focus-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-submit" id="detailed-report">Detailed Report</button>
+                <button class="btn btn-next" id="new-interview">retake Interview</button>
+            </div>
+            
+            <div class="feedback-container" id="feedback-container">
+                <h4 class="feedback-title">Areas Needing Improvement:</h4>
+                <div id="improvement-areas" class="improvement-list">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="portfolio.js"></script>
+</body>
+</html>

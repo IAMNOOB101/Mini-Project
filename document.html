@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,48 +13,48 @@
             <input type="text" placeholder="Ask any question">
             <button>🔍</button>
         </div>
-        <div class="settings">
-            ⚙️
+        <div class="user-display">
+            <span id="navbar-username">Guest</span>
+            <div class="settings">⚙️</div>
         </div>
     </div>
 
     <div class="container">
-        <div class="sidebar">
+        <div class="sidebar"> 
             <div class="profile">
-                <img src="user.png" alt="User Image">
-                <span>username</span>
+                <img src="user.png" alt="Profile Picture">
+                <span id="sidebar-username">Username</span>
             </div>
             <ul>
                 <li><a href="dashboard.html">📊 Dashboard</a></li>
                 <li><a href="interview1.html">💼 Interview</a></li>
-                <li class="active"><a href="document.html">📂 Document Centre</a></li>
-                <li><a href=" preparationhub.html">📚 Preparation Hub</a></li>
+                <li><a href="document.html">📂 Document Centre</a></li>
+                <li><a href="preparationhub.html">📚 Preparation Hub</a></li>
                 <li><a href="portfolio.html">🖼️ My Portfolio</a></li>
-                <!-- <li><a href="login.html">🚪 Logout</a></li> -->
             </ul>
             <a href="login.html">
-            <button class="logout">🚪 LOGOUT</button>
+                <button class="logout-btn">🚪 Logout</button>
             </a>
         </div>
 
         <div class="main-content">
             <h2>Please enter your details</h2>
-            <form>
+            <form id="document-form">
                 <div class="input-group">
-                    <input type="text" placeholder="First name">
-                    <input type="text" placeholder="Last name">
+                    <input type="text" id="first_name" name="first_name" placeholder="First name" required>
+                    <input type="text" id="last_name" name="last_name" placeholder="Last name" required>
                 </div>
-                <input type="text" placeholder="Education">
-                <input type="text" placeholder="Skills">
-                <input type="text" placeholder="Work place">
-                <input type="text" placeholder="Hobbies">
-                <input type="text" placeholder="Git ID link">
-                <input type="text" placeholder="LinkedIn ID link">
-
-                <button type="submit">Click to Proceed</button>
+                <input type="text" id="education" name="education" placeholder="Education" required>
+                <input type="text" id="skills" name="skills" placeholder="Skills (comma separated)" required>
+                <input type="text" id="work_place" name="work_place" placeholder="Work place">
+                <input type="text" id="hobbies" name="hobbies" placeholder="Hobbies (comma separated)">
+                <input type="url" id="git_id" name="git_id" placeholder="GitHub Profile URL">
+                <input type="url" id="linkedin_id" name="linkedin_id" placeholder="LinkedIn Profile URL">
+                <button type="submit" id="proceedButton">Save Profile</button>
             </form>
         </div>
     </div>
     <script src="document.js"></script>
 </body>
-</html>
+</html> 
+

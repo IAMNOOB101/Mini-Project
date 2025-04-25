@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,6 @@
     <script defer src="facecam.js"></script>
 </head>
 <body>
-
     <!-- Navbar -->
     <nav class="navbar">
         <div class="profile-section">
@@ -19,12 +18,12 @@
         <div class="search-bar">
             <input type="text" placeholder="Ask any question...">
             <button>🔍</button>
+            <span class="profile-name" id="navbar-username">username</span>
         </div>
     </nav>
 
     <!-- Sidebar + Main Content -->
     <div class="main-container">
-        
         <!-- Sidebar -->
         <aside class="sidebar">
             <ul>
@@ -39,28 +38,73 @@
 
         <!-- Interview Section -->
         <div class="interview-container">
-            <h2>Facecam & Voice Recognition</h2>
-            <p>Interact with the webcam and talk to the website.</p>
+            <div class="interview-header">
+                <h2>Mock Interview Preparation</h2>
+                <p class="subtitle">Practice your interview skills with real-time feedback</p>
+            </div>
 
-            <!-- Webcam Preview -->
-            <div class="webcam-container">
-                <video id="webcam" autoplay></video>
-                <div class="controls">
-                    <button id="mic-btn">🎤</button>
-                    <button id="camera-btn">📷</button>
-                    <button id="menu-btn">☰</button>
+            <div class="content-wrapper">
+                <!-- Left Column -->
+                <div class="left-column">
+                    <!-- Instructions -->
+                    <div class="card instructions">
+                        <h3>📋 Instructions</h3>
+                        <ul>
+                            <li>✅ Ensure good lighting and a quiet environment</li>
+                            <li>✅ Position your face clearly in the camera</li>
+                            <li>✅ Speak clearly when answering questions</li>
+                            <li>✅ Maintain eye contact with the camera</li>
+                            <li>✅ Click Start when ready to begin</li>
+                        </ul>
+                    </div>
+
+                    <!-- Confidence Meter -->
+                    <div class="card confidence-meter">
+                        <h3>📊 Confidence Analysis</h3>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="confidence-level">0%</div>
+                        </div>
+                        <p id="confidence-feedback">Waiting for analysis...</p>
+                        <div class="confidence-tips">
+                            <p><strong>Tips to improve:</strong></p>
+                            <ul>
+                                <li>Smile naturally to boost confidence</li>
+                                <li>Maintain good posture</li>
+                                <li>Speak at a moderate pace</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="right-column">
+                    <!-- Webcam Preview -->
+                    <div class="card webcam-container">
+                        <h3>🎥 Camera Preview</h3>
+                        <video id="webcam" autoplay></video>
+                        <div class="controls">
+                            <button id="mic-btn" title="Toggle Microphone">🎤</button>
+                            <button id="camera-btn" title="Toggle Camera">📷</button>
+                            <button id="menu-btn" title="Settings">⚙️</button>
+                        </div>
+                    </div>
+
+                    <!-- Voice Recognition -->
+                    <div class="card voice-container">
+                        <h3>🎙️ Voice Recognition</h3>
+                        <button id="start-voice" class="voice-btn">Start Voice Recognition</button>
+                        <div class="speech-output">
+                            <p id="speech-text">Your speech will appear here...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Voice Recognition Section -->
-            <div class="voice-container">
-                <button id="start-voice">Start Voice Recognition</button>
-                <p id="speech-text">Your speech will appear here</p>
-            </div>
-
-            <button class="start-btn">Start</button>
+            <!-- Start Button -->
+            <button class="start-btn" id="start-interview">
+                🚀 Start Mock Interview
+            </button>
         </div>
     </div>
-
 </body>
 </html>

@@ -1,102 +1,175 @@
-// document.addEventListener("DOMContentLoaded", function() {
+// document.addEventListener("DOMContentLoaded", function () {
 //     const immediateBtn = document.getElementById("immediate");
 //     const setTimeBtn = document.getElementById("set-time");
-//     const dateTimePicker = document.getElementById("date-time-picker");
-//     const dateInput = document.getElementById("date");
-//     const timeInput = document.getElementById("time");
 //     const saveBtn = document.getElementById("save");
-//     const cancelBtn = document.getElementById("cancel");
+//     const dateTimePicker = document.getElementById("date-time-picker");
 
-//     // Initially hide the date-time picker
-//     dateTimePicker.classList.add("hidden");
+//     // Start Interview Immediately (Redirect to facecam.html first)
+//     immediateBtn.addEventListener("click", function () {
+//         const role = document.getElementById("role").value;
+//         const interviewType = document.getElementById("interviewType").value;
+//         const knowledgeDomain = document.getElementById("knowledge").value;
 
-//     // Toggle Between Immediate and Set Date & Time
-//     immediateBtn.addEventListener("click", function() {
-//         immediateBtn.classList.add("active");
-//         setTimeBtn.classList.remove("active");
-//         dateTimePicker.classList.add("hidden");
-//     });
-
-//     setTimeBtn.addEventListener("click", function() {
-//         setTimeBtn.classList.add("active");
-//         immediateBtn.classList.remove("active");
-//         dateTimePicker.classList.remove("hidden");
-//     });
-
-//     // Save Button Functionality
-//     saveBtn.addEventListener("click", function() {
-//         if (setTimeBtn.classList.contains("active")) {
-//             if (!dateInput.value || !timeInput.value) {
-//                 alert("Please select a date and time!");
-//                 return;
-//             }
+//         if (!role || !interviewType) {
+//             alert("Please select a Role and Interview Type before starting.");
+//             return;
 //         }
-//         alert("Your interview has been saved successfully!");
+
+//         // Store the details in localStorage
+//         localStorage.setItem("selectedRole", role);
+//         localStorage.setItem("selectedInterviewType", interviewType);
+//         localStorage.setItem("selectedKnowledgeDomain", knowledgeDomain);
+//         // localStorage.setItem("selectedRole", role);
+// // localStorage.setItem("interviewType", interviewType);
+
+
+//         // Redirect to facecam.html first
+//         window.location.href = "facecam.html";
 //     });
 
-//     // Cancel Button Functionality
-//     cancelBtn.addEventListener("click", function() {
-//         immediateBtn.classList.add("active");
-//         setTimeBtn.classList.remove("active");
-//         dateTimePicker.classList.add("hidden");
-//         dateInput.value = "";
-//         timeInput.value = "";
+//     // Show Date-Time Picker when "Set Date and Time" is clicked
+//     setTimeBtn.addEventListener("click", function () {
+//         dateTimePicker.classList.toggle("hidden");
 //     });
+
+//     // Save Interview for Later
+//     saveBtn.addEventListener("click", function () {
+//         const role = document.getElementById("role").value;
+//         const interviewType = document.getElementById("interviewType").value;
+//         const knowledgeDomain = document.getElementById("knowledge").value;
+//         const date = document.getElementById("date").value;
+//         const time = document.getElementById("time").value;
+
+//         const interviewDetails = {
+//             role: role,
+//             interviewType: interviewType,
+//             knowledgeDomain: knowledgeDomain,
+//             date: date,
+//             time: time
+//         };
+
+//         localStorage.setItem("savedInterview", JSON.stringify(interviewDetails));
+//         alert("Interview details saved!");
+//     });
+
+//     // Load saved data (if any)
+//     function loadSavedData() {
+//         const savedData = JSON.parse(localStorage.getItem("savedInterview"));
+//         if (savedData) {
+//             document.getElementById("role").value = savedData.role;
+//             document.getElementById("interviewType").value = savedData.interviewType;
+//             document.getElementById("knowledge").value = savedData.knowledgeDomain;
+//             document.getElementById("date").value = savedData.date;
+//             document.getElementById("time").value = savedData.time;
+//         }
+//     }
+
+//     loadSavedData();
 // });
 document.addEventListener("DOMContentLoaded", function() {
-    const immediateBtn = document.getElementById("immediate");
-    const setTimeBtn = document.getElementById("set-time");
-    const dateTimePicker = document.getElementById("date-time-picker");
-    const dateInput = document.getElementById("date");
-    const timeInput = document.getElementById("time");
-    const saveBtn = document.getElementById("save");
-    const cancelBtn = document.getElementById("cancel");
+  const immediateBtn = document.getElementById("immediate");
+  const setTimeBtn = document.getElementById("set-time");
+  const saveBtn = document.getElementById("save");
+  const dateTimePicker = document.getElementById("date-time-picker");
+  const resumeInput = document.getElementById("resume");
+  const roleSelect = document.getElementById("role");
+  const interviewTypeSelect = document.getElementById("interviewType");
+  const knowledgeSelect = document.getElementById("knowledge");
+  if (!localStorage.getItem('userEmail')) {
+      window.location.href = "login.html";
+      return;
+  }
+  // Start Interview Immediately
+  immediateBtn.addEventListener("click", async function() {
+      const role = roleSelect.value;
+      const interviewType = interviewTypeSelect.value;
+      const knowledgeDomain = knowledgeSelect.value;
+      const resumeFile = resumeInput.files[0];
 
-    dateTimePicker.classList.add("hidden");
+      if (!role || !interviewType) {
+          alert("Please select a Role and Interview Type");
+          return;
+      }
 
-    immediateBtn.addEventListener("click", function() {
-        immediateBtn.classList.add("active");
-        setTimeBtn.classList.remove("active");
-        dateTimePicker.classList.add("hidden");
-    });
+      try {
+          // Store selections in localStorage
+          localStorage.setItem("selectedRole", role);
+          localStorage.setItem("interviewType", interviewType);
+          localStorage.setItem("knowledgeDomain", knowledgeDomain);
 
-    setTimeBtn.addEventListener("click", function() {
-        setTimeBtn.classList.add("active");
-        immediateBtn.classList.remove("active");
-        dateTimePicker.classList.remove("hidden");
-    });
+          // Upload resume if provided (fire-and-forget approach)
+          if (resumeFile) {
+              const formData = new FormData();
+              formData.append("resume", resumeFile);
+              formData.append("email", localStorage.getItem("userEmail") || "guest@example.com");
+              
+              // Don't await this - proceed immediately
+              fetch("/api/upload_resume", {
+                  method: "POST",
+                  body: formData
+              }).catch(e => console.log("Resume upload optional:", e));
+          }
 
-    saveBtn.addEventListener("click", function() {
-        if (setTimeBtn.classList.contains("active")) {
-            if (!dateInput.value || !timeInput.value) {
-                alert("Please select a date and time!");
-                return;
-            }
-        }
-        alert("Your interview has been saved successfully!");
-    });
+          // Redirect to facecam
+          window.location.href = "facecam.html";
+      } catch (error) {
+          console.error("Error:", error);
+          alert("Error starting interview: " + error.message);
+      }
+  });
 
-    cancelBtn.addEventListener("click", function() {
-        immediateBtn.classList.add("active");
-        setTimeBtn.classList.remove("active");
-        dateTimePicker.classList.add("hidden");
-        dateInput.value = "";
-        timeInput.value = "";
-    });
-    document.getElementById("immediate").addEventListener("click", async () => {
-        try {
-            // Request camera and microphone access
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            
-            // If permission is granted, redirect to facecam page
-            window.location.href = "facecam.html";
-        } catch (err) {
-            console.error("Permission denied:", err);
-            alert("Please allow camera and microphone access to proceed.");
-        }
-    });
-    document.getElementById("immediate").addEventListener("click", () => {
-        window.location.href = "facecam.html"; // Redirect to Facecam page
-    });
+  // Save Interview for Later
+  saveBtn.addEventListener("click", async function() {
+      const role = roleSelect.value;
+      const interviewType = interviewTypeSelect.value;
+      const knowledgeDomain = knowledgeSelect.value;
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+      const resumeFile = resumeInput.files[0];
 
+      if (!date || !time) {
+          alert("Please select date and time");
+          return;
+      }
+
+      try {
+          const interviewData = {
+              email: localStorage.getItem("userEmail") || "guest@example.com",
+              role: role,
+              interviewType: interviewType,
+              knowledgeDomain: knowledgeDomain,
+              scheduledTime: new Date(`${date}T${time}`).toISOString(),
+              status: "scheduled"
+          };
+
+          // Upload resume if provided
+          if (resumeFile) {
+              const formData = new FormData();
+              formData.append("resume", resumeFile);
+              formData.append("email", interviewData.email);
+
+              await fetch("/api/upload_resume", {
+                  method: "POST",
+                  body: formData
+              });
+          }
+
+          // Save interview to database
+          await fetch("/api/save_interview", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(interviewData)
+          });
+
+          alert("Interview scheduled successfully!");
+      } catch (error) {
+          console.error("Error:", error);
+          alert("Error scheduling interview: " + error.message);
+      }
+  });
+
+  // Toggle date-time picker
+  setTimeBtn.addEventListener("click", function() {
+      dateTimePicker.classList.toggle("hidden");
+  });
 });

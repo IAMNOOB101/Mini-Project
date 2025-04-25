@@ -8,10 +8,11 @@
 </head>
 <body>
     <div class="container">
-        <!-- Add anchor tag to wrap the back button for redirection -->
+        <!-- Back button -->
         <a href="otp.html">
             <button class="back-btn">←</button>
         </a>
+        
         <div class="icon">✦</div>
         <h2>Reset password</h2>
         <p>Please type something you'll remember</p>
@@ -19,24 +20,27 @@
         <form id="resetForm">
             <label for="newPassword">New password</label>
             <div class="password-container">
-                <input type="password" id="newPassword" placeholder="Must be 8 characters">
+                <input type="password" id="newPassword" placeholder="Must be 8 characters" required>
                 <span class="toggle-password" onclick="togglePassword('newPassword', this)">👁️</span>
             </div>
 
             <label for="confirmPassword">Confirm new password</label>
             <div class="password-container">
-                <input type="password" id="confirmPassword" placeholder="Repeat password">
+                <input type="password" id="confirmPassword" placeholder="Repeat password" required>
                 <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">👁️</span>
             </div>
-            <a href="dashboard.html">
-                <button type="button" id="reset-btn">Reset password</button>
-              </a>
-              
+            
+            <!-- Changed from anchor tag to button with onclick handler -->
+            <button type="button" id="reset-btn" onclick="resetPassword()">Reset password</button>
+            
+            <!-- Added message display area -->
+            <p id="message" style="margin-top: 1rem;"></p>
         </form>
 
         <p class="login-text">Already have an account? <a href="login.html">Log in</a></p>
     </div>
 
-    <!-- <script src="script.js"></script> -->
+    <!-- Added reset.js script -->
+    <script src="reset.js"></script>
 </body>
 </html>

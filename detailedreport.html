@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MockMate - Detailed Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        .report-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #4361ee;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section-title {
+            color: #4361ee;
+            border-bottom: 2px solid #4361ee;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4361ee;
+            color: white;
+        }
+        .btn {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 12px;
+            background: #4361ee;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn:hover {
+            background: #3a56d4;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container" id="report-content">
+        <h1>Interview Performance Report</h1>
+        
+        <div class="user-info">
+            <!-- <h2 id="user-name">User Name</h2>  -->
+            <p><strong>Email:</strong> <span id="user-email">user@example.com</span></p>
+            <p><strong>Date:</strong> <span id="report-date">Loading...</span></p>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Performance Summary</h3>
+            <table>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Overall Score</td>
+                    <td id="overall-score">0%</td>
+                </tr>
+                <tr>
+                    <td>Questions Answered</td>
+                    <td id="questions-answered">0/0</td>
+                </tr>
+                <tr>
+                    <!-- <td>Focus Percentage</td>
+                    <td id="focus-percentage">0%</td> -->
+                </tr>
+            </table>
+        </div>
+
+        
+        </div>
+    </div>
+
+    <button class="btn" id="download-btn">Download Report as PDF</button>
+
+    <script src="detailedreport.js"></script>
+</body>
+</html>
