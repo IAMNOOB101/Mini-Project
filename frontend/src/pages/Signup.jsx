@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import "./Signup.css";
 
 const STEPS = ["Account & Resume", "Profile Details", "Setup Authenticator"];
 
@@ -259,34 +260,42 @@ const Signup = () => {
 
         {/* ── Step 2: TOTP Setup ── */}
         {step === 2 && (
-          <form onSubmit={handleTotpConfirm} className="auth-form">
-            <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-              <p style={{ marginBottom: "1rem", fontSize: "0.9rem" }}>
-                Scan this QR code with <strong>Google Authenticator</strong> or <strong>Authy</strong>, then enter the 6-digit code below to activate 2FA.
-              </p>
-              {totpQr && (
-                <img src={totpQr} alt="TOTP QR Code" style={{ width: 200, height: 200, borderRadius: 8, border: "2px solid var(--border)" }} />
-              )}
-            </div>
+          <div className="form-group">
+            <label>Setup Two-Factor Authentication (2FA)</label>
+            <p className="text-sm text-gray-600 mb-4">
+              Scan this QR code with Google Authenticator or Authy
+            </p>
 
-            <div className="form-group">
+            {/* QR Code Display */}
+            {qrCode ? (
+              <div className="qr-code-container">
+                <img
+                  src={qrCode}
+                  alt="2FA QR Code"
+                  className="qr-code-image"
+                />
+              </div>
+            ) : (
+              <div className="loading-spinner">
+                <p>Generating QR code...</p>
+              </div>
+            )}
+
+            {/* 6-Digit Code Input */}
+            <div className="form-group mt-4">
               <label>6-Digit Authenticator Code *</label>
               <input
-                type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6}
-                placeholder="000000" value={totpToken}
-                onChange={(e) => setTotpToken(e.target.value)}
-                autoComplete="one-time-code"
-                style={{ letterSpacing: "0.3em", fontSize: "1.5rem", textAlign: "center" }}
-                required
+                type="text"
+                placeholder="000000"
+                value={totpCode}
+                onChange={(e) => setTotpCode(e.target.value.slice(0, 6))}
+                className="form-input text-center tracking-widest"
+                maxLength="6"
               />
             </div>
 
-            {totpError && <div className="alert alert-error">{totpError}</div>}
-
-            <button type="submit" className="btn-primary" disabled={totpVerifying || totpToken.length !== 6}>
-              {totpVerifying ? "Verifying…" : "Confirm & Finish Setup"}
-            </button>
-          </form>
+            {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+          </div>
         )}
 
         {step < 2 && (

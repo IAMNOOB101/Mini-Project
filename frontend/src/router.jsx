@@ -14,6 +14,7 @@ import Plans            from "./pages/Plans";
 import ProtectedRoute   from "./components/ProtectedRoute";
 import UserProfile      from "./pages/UserProfile.jsx";
 import GuestInterview   from "./pages/GuestInterview.jsx";
+import UserHome         from "./pages/UserHome.jsx";
 
 const AppRoutes = () => (
   <Routes>
@@ -22,6 +23,7 @@ const AppRoutes = () => (
     <Route path="/signup" element={<Signup />} />
     <Route path="/plans"  element={<Plans />} />
 
+    <Route path="/user-home" element={<ProtectedRoute><UserHome /></ProtectedRoute>} />
     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/setup"     element={<ProtectedRoute><InterviewSetup /></ProtectedRoute>} />
     <Route path="/interview" element={<ProtectedRoute><Interview /></ProtectedRoute>} />

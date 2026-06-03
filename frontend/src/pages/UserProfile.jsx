@@ -38,7 +38,27 @@ export default function UserProfile() {
       setLoading(true);
       const response = await api.get("/user/profile");
       setUser(response.data.data);
-      setFormData(response.data.data);
+
+      // If resume data exists, auto-fill form
+      if (response.data.data.resumeData) {
+        console.log("📄 Resume data found, auto-filling form...");
+        const filledData = {
+          ...response.data.data,
+          // Pre-fill from resume data
+          skills: response.data.data.resumeData.skills?.join(", ") ||
+                  response.data.data.skills || "",
+          domain: response.data.data.resumeData.domain ||
+                  response.data.data.domain || "",
+          phone: response.data.data.resumeData.phone ||
+                 response.data.data.phone || "",
+          email: response.data.data.resumeData.email ||
+                 response.data.data.email || "",
+        };
+        setFormData(filledData);
+      } else {
+        setFormData(response.data.data);
+      }
+
       setError("");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load profile");
@@ -77,13 +97,68 @@ export default function UserProfile() {
     try {
       setSaving(true);
       setError("");
-      const response = await api.put("/user/profile", formData);
-      setUser(response.data.data);
-      setSuccess("✅ Profile updated successfully!");
-      setIsEditing(false);
-      setTimeout(() => setSuccess(""), 3000);
+
+      // If resume file is selected, upload it with form data
+      if (resumeFile) {
+        const uploadFormData = new FormData();
+
+        // Add all text fields
+        Object.keys(formData).forEach((key) => {
+          if (formData[key] !== null && formData[key] !== undefined) {
+            uploadFormData.append(key, formData[key]);
+          }
+        });
+
+        // Add resume file
+        uploadFormData.append("resume", resumeFile);
+
+        const response = await api.put("/user/profile", uploadFormData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        setUser(response.data.data);
+        setSuccess("✅ Profile and resume updated successfully!");
+        setIsEditing(false);
+        setResumeFile(null);
+
+        // Refresh to show parsed resume data
+        await fetchUserProfile();
+
+        setTimeout(() => setSuccess(""), 3000);
+      } else {
+        // No resume file, just update text fields
+        const response = await api.put("/user/profile", formData);
+        setUser(response.data.data);
+        setSuccess("✅ Profile updated successfully!");
+        setIsEditing(false);
+
+        // Refresh to show updates
+        await fetchUserProfile();
+
+        setTimeout(() => setSuccess(""), 3000);
+      }
     } catch (err) {
       setError("❌ " + (err.response?.data?.message || "Failed to update profile"));
+      console.error("Save error:", err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDisable2FA = async () => {
+    const password = prompt("Enter your password to disable 2FA:");
+    if (!password) return;
+
+    try {
+      setSaving(true);
+      setError("");
+      await api.post("/user/profile/disable-2fa", { password });
+      setSuccess("✅ 2FA disabled successfully!");
+      fetchUserProfile();
+      setTimeout(() => setSuccess(""), 3000);
+    } catch (err) {
+      setError("❌ Failed to disable 2FA");
+      console.error("Disable 2FA error:", err);
     } finally {
       setSaving(false);
     }
@@ -363,11 +438,11 @@ export default function UserProfile() {
           <div className="resume-section">
             <h3>📄 Resume</h3>
             <div className="resume-upload-area">
-              {user?.resumeUrl ? (
+              {user?.resumeURL ? (
                 <div className="resume-uploaded">
                   <p>✅ Resume uploaded</p>
-
-                    href={user.resumeUrl}
+                  <a
+                    href={user.resumeURL}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="resume-link"
@@ -410,7 +485,44 @@ export default function UserProfile() {
             </div>
           </div>
 
-          {/* Danger Zone */}
+          {/* 2FA Management Section - MOVED OUTSIDE DANGER ZONE */}
+          <div className="twofa-section">
+            <h3>🔐 Two-Factor Authentication</h3>
+
+            {user?.totpEnabled ? (
+              <div className="twofa-enabled">
+                <p className="text-green-600 font-semibold">✅ 2FA is enabled</p>
+                <p className="text-gray-600 text-sm mb-4">
+                  Your account is protected with two-factor authentication
+                </p>
+                <button
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to disable 2FA?")) {
+                      handleDisable2FA();
+                    }
+                  }}
+                  className="btn btn-secondary"
+                >
+                  🔓 Disable 2FA
+                </button>
+              </div>
+            ) : (
+              <div className="twofa-disabled">
+                <p className="text-orange-600 font-semibold">⚠️ 2FA is not enabled</p>
+                <p className="text-gray-600 text-sm mb-4">
+                  Enable 2FA for better security
+                </p>
+                <button
+                  onClick={() => alert("Enable 2FA during signup or re-register")}
+                  className="btn btn-primary"
+                >
+                  🔒 Enable 2FA
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Danger Zone - NOW SEPARATE */}
           <div className="danger-zone">
             <h3>⚠️ Danger Zone</h3>
 

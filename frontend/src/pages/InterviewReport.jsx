@@ -1,6 +1,8 @@
-import { useParams, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useParams, Link } from "react-router-dom";
 import { getTranscript } from "../services/interview.service.js";
+
+const POLL_INTERVAL_MS = 4000; // poll every 4 seconds while evaluating
 
 const ScoreBar = ({ label, value }) => (
   <div style={{ marginBottom: "0.75rem" }}>
@@ -16,21 +18,102 @@ const ScoreBar = ({ label, value }) => (
 
 export default function InterviewReport() {
   const { sessionId } = useParams();
-  const [data, setData]     = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError]   = useState("");
+  const [data, setData]         = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState("");
+  const [evaluating, setEvaluating] = useState(false);
+  const pollRef = useRef(null);
+
+  const fetchReport = async () => {
+    try {
+      const r = await getTranscript(sessionId);
+      const reportData = r.data;
+      const finalReport = reportData.finalReport || {};
+
+      if (finalReport.evaluating === true) {
+        // Still generating — keep polling
+        setData(reportData);
+        setEvaluating(true);
+        setLoading(false);
+      } else {
+        // Report ready
+        setData(reportData);
+        setEvaluating(false);
+        setLoading(false);
+        if (pollRef.current) {
+          clearInterval(pollRef.current);
+          pollRef.current = null;
+        }
+      }
+    } catch (e) {
+      setError(e.response?.data?.message || "Failed to load report");
+      setLoading(false);
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
+    }
+  };
 
   useEffect(() => {
-    getTranscript(sessionId)
-      .then((r) => { setData(r.data); setLoading(false); })
-      .catch((e) => { setError(e.response?.data?.message || "Failed to load report"); setLoading(false); });
+    fetchReport();
   }, [sessionId]);
 
-  if (loading) return <div className="page-container" style={{ textAlign: "center", paddingTop: "4rem" }}><div className="spinner" /><p>Loading report…</p></div>;
-  if (error)   return <div className="page-container"><div className="alert alert-error">{error}</div><Link to="/dashboard">← Back</Link></div>;
+  useEffect(() => {
+    if (evaluating && !pollRef.current) {
+      pollRef.current = setInterval(fetchReport, POLL_INTERVAL_MS);
+    }
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, [evaluating]);
+
+  if (loading) return (
+    <div className="page-container" style={{ textAlign: "center", paddingTop: "4rem" }}>
+      <div className="spinner" />
+      <p>Loading report…</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="page-container">
+      <div className="alert alert-error">{error}</div>
+      <Link to="/dashboard">← Back</Link>
+    </div>
+  );
+
+  // Still evaluating — show progress screen
+  if (evaluating || data?.finalReport?.evaluating) {
+    return (
+      <div className="page-container" style={{ textAlign: "center", paddingTop: "5rem" }}>
+        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🧠</div>
+        <h2 style={{ marginBottom: "0.75rem" }}>Generating Your Report</h2>
+        <p style={{ color: "var(--text-muted)", maxWidth: 420, margin: "0 auto 2rem" }}>
+          Our AI is evaluating all your answers and generating personalised feedback. This typically takes 60–90 seconds.
+        </p>
+        <div className="spinner" style={{ margin: "0 auto" }} />
+        <p style={{ marginTop: "1.5rem", fontSize: "0.85rem", color: "var(--text-muted)" }}>
+          Checking every {POLL_INTERVAL_MS / 1000} seconds…
+        </p>
+      </div>
+    );
+  }
 
   const report = data.finalReport || {};
-  const scores = report.scores   || {};
+
+  // Error during background evaluation
+  if (report.error) {
+    return (
+      <div className="page-container">
+        <div className="alert alert-error">
+          ⚠️ Report generation failed: {report.errorMessage || "Unknown error"}. Please try again later.
+        </div>
+        <Link to="/dashboard">← Back to Dashboard</Link>
+      </div>
+    );
+  }
+
+  const scores = report.scores || {};
   const level  = report.confidenceLevel || "—";
   const levelColor = level === "High" ? "badge-green" : level === "Low" ? "badge-red" : "badge-yellow";
 

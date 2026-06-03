@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { startInterview, submitAnswer } from "../services/interview.service.js";
 import { startSpeechRecognition } from "../hooks/useSpeechToText.js";
-import { getVoiceConfidence } from "../utils/voiceConfidence.js";
+import { createVoiceTracker } from "../utils/voiceConfidence.js";
 
 const STATES = {
   PREVIEW: "preview",   // camera/mic test — camera IS active here
@@ -22,22 +22,25 @@ export default function Interview() {
   const [sessionId, setSessionId] = useState(null);
   const [question, setQuestion]   = useState("");
   const [qIndex, setQIndex]       = useState(0);
+  const [totalTopics, setTotalTopics] = useState(0);
   const [answer, setAnswer]       = useState("");
-  const [lastEval, setLastEval]   = useState(null);
+
   const [error, setError]         = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [mediaStream, setMediaStream] = useState(null);
   const [mediaError, setMediaError]   = useState("");
   const [permGranted, setPermGranted] = useState(false);
   const [audioLevel, setAudioLevel]   = useState(0);
-  const [transcript, setTranscript]   = useState([]); // real-time transcription
+  const [transcript, setTranscript]   = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
 
-  const videoRef    = useRef(null);
-  const recognRef   = useRef(null);
-  const navigate    = useNavigate();
-  const analyserRef = useRef(null);
+  const videoRef     = useRef(null);
+  const recognRef    = useRef(null);
+  const navigate     = useNavigate();
+  const analyserRef  = useRef(null);
   const animFrameRef = useRef(null);
-  const audioCtxRef = useRef(null);
+  const audioCtxRef  = useRef(null);
+  const voiceTrackerRef = useRef(null);
 
   // ── Request camera + mic, set up audio monitor ──────────────────────────
   useEffect(() => {
@@ -49,7 +52,6 @@ export default function Interview() {
         stream = s;
         setMediaStream(s);
         setPermGranted(true);
-        if (videoRef.current) videoRef.current.srcObject = s;
 
         try {
           const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -80,9 +82,29 @@ export default function Interview() {
       recognRef.current?.stop();
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       if (audioCtxRef.current) audioCtxRef.current.close().catch(() => {});
-      // Only stop tracks on full unmount — we manage release via releaseCamera()
       if (stream) stopAllTracks(stream);
     };
+  }, []);
+
+  // ── Attach media stream to video element when both are available ────────
+  useEffect(() => {
+    if (videoRef.current && mediaStream) {
+      videoRef.current.srcObject = mediaStream;
+    }
+  }, [mediaStream, permGranted]);
+
+  // ── Load user profile ────────────────────────────────────────────────────
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    fetch("/api/user/profile", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setUserProfile(data.data);
+        console.log("✅ Profile loaded:", data.data?.domain, data.data?.experience);
+      })
+      .catch((err) => console.error("Failed to load profile:", err));
   }, []);
 
   // ── Release camera immediately once interview is done ──────────────────
@@ -102,49 +124,51 @@ export default function Interview() {
     setError("");
   };
 
-  // ── Start interview ──────────────────────────────────────────────────
+  // ── Start interview ───────────────────────────────────────────────────
   const handleStart = async () => {
     if (mediaError) return setError(mediaError);
-    setError(""); setUiState(STATES.LOADING);
+
+    if (!userProfile?.domain || userProfile?.experience == null || userProfile?.experience === "") {
+      return setError("⚠️ Please complete your profile (domain + experience) before starting.");
+    }
+
+    setError("");
+    setUiState(STATES.LOADING);
+
     try {
-      const { data } = await startInterview();
+      const { data } = await startInterview({
+        domain: userProfile.domain,
+        experienceLevel: userProfile.experience,
+        role: userProfile.role || "",
+        salaryRange: userProfile.desiredSalary || "",
+      });
       setSessionId(data.sessionId);
       setQuestion(data.question || "");
-      setQIndex(1);
+      setQIndex(data.questionNumber || 1);
+      setTotalTopics(data.totalTopics || 0);
       setUiState(STATES.ACTIVE);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to start. Check your profile & resume.");
-      setUiState(STATES.PREVIEW);
+      setUiState(STATES.IDLE);
     }
   };
 
-  // ── Speech recognition + real-time transcription ────────────────────
+  // ── Speech recognition + voice confidence tracking ──────────────────
   const toggleSpeech = () => {
     if (isRecording) {
       recognRef.current?.stop();
       recognRef.current = null;
       setIsRecording(false);
+      // Voice tracker keeps running until submit
     } else {
+      // Start continuous voice confidence tracking
+      if (mediaStream) {
+        voiceTrackerRef.current = createVoiceTracker(mediaStream);
+        voiceTrackerRef.current.start();
+      }
+
       recognRef.current = startSpeechRecognition((text, isFinal) => {
         setAnswer(text);
-        // Update real-time transcription panel
-        setTranscript((prev) => {
-          const updated = [...prev];
-          const last = updated[updated.length - 1];
-          if (last && last.interim) {
-            updated[updated.length - 1] = { ...last, text, interim: !isFinal };
-          } else if (!isFinal) {
-            updated.push({ questionIndex: qIndex, question, text, interim: true });
-          } else {
-            // Replace last interim or add final
-            if (last && last.interim) {
-              updated[updated.length - 1] = { questionIndex: qIndex, question, text, interim: false };
-            } else {
-              updated.push({ questionIndex: qIndex, question, text, interim: false });
-            }
-          }
-          return updated;
-        });
       });
       setIsRecording(true);
     }
@@ -157,31 +181,31 @@ export default function Interview() {
 
     recognRef.current?.stop(); recognRef.current = null; setIsRecording(false);
 
-    // Finalise transcript entry for this question
-    if (answer.trim()) {
-      setTranscript((prev) => {
-        const filtered = prev.filter((t) => !t.interim);
-        const alreadyHas = filtered.some((t) => t.questionIndex === qIndex);
-        if (alreadyHas) return filtered;
-        return [...filtered, { questionIndex: qIndex, question, text: answer, interim: false }];
-      });
+    // Get voice confidence from continuous tracker (real measurement)
+    let voice = 5;
+    if (voiceTrackerRef.current) {
+      try {
+        const raw = voiceTrackerRef.current.stop();
+        voice = Math.round(raw * 10);
+        console.log(`🎤 Voice confidence score: ${voice}/10`);
+      } catch (_) {}
+      voiceTrackerRef.current = null;
     }
 
-    let voice = 5;
-    try { voice = Math.round((await getVoiceConfidence(mediaStream)) * 10); } catch (_) {}
-
     try {
-      const { data } = await submitAnswer({ sessionId, answerText: answer, confidence: { voice, facial: 7 } });
-      setLastEval(data.evaluation);
+      // facial: null — no real facial analysis implemented yet
+      const { data } = await submitAnswer({ sessionId, answerText: answer, confidence: { voice, facial: null } });
+
       setAnswer("");
 
       if (data.completed) {
-        releaseCamera(); // ← camera off as soon as interview ends
+        releaseCamera();
         setUiState(STATES.DONE);
-        setTimeout(() => navigate(`/report/${sessionId}`), 2500);
+        setTimeout(() => navigate(`/report/${sessionId}`), 1000);
       } else {
         setQuestion(data.nextQuestion || "");
-        setQIndex((n) => n + 1);
+        setQIndex(data.questionNumber || ((n) => n + 1));
+        if (data.totalTopics) setTotalTopics(data.totalTopics);
         setUiState(STATES.ACTIVE);
       }
     } catch (err) {
@@ -218,7 +242,7 @@ export default function Interview() {
             </div>
           )}
 
-          {/* Mic level — shown during preview AND active */}
+          {/* Mic level */}
           {(uiState === STATES.PREVIEW || inInterview) && permGranted && (
             <div className="audio-indicator card" style={{ marginTop: "1rem" }}>
               <p style={{ fontSize: "0.8rem", marginBottom: "0.5rem", fontWeight: 500 }}>🔊 Microphone</p>
@@ -249,14 +273,7 @@ export default function Interview() {
             </div>
           )}
 
-          {lastEval && inInterview && (
-            <div className="eval-sidebar card">
-              <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "0.5rem" }}>Last answer</p>
-              <div className="score-row"><span>Overall</span><strong>{lastEval.overallScore}/10</strong></div>
-              <div className="score-row"><span>Content</span><strong>{lastEval.contentScore}/10</strong></div>
-              <div className="score-row"><span>Clarity</span><strong>{lastEval.clarityScore}/10</strong></div>
-            </div>
-          )}
+          {/* Evaluation hidden during interview — shown in final report */}
         </div>
 
         {/* ── Right main panel ── */}
@@ -302,9 +319,41 @@ export default function Interview() {
               <div style={{ fontSize: "3rem", textAlign: "center", marginBottom: "1rem" }}>🎯</div>
               <h2>Ready for your mock interview?</h2>
               <p>The AI will generate personalised questions based on your profile, resume, preferred role, and expected salary.</p>
+
+              {/* Profile summary */}
+              {userProfile && (
+                <div style={{
+                  marginTop: "1rem", padding: "1rem",
+                  background: "var(--bg-secondary)", borderRadius: 8,
+                  fontSize: "0.875rem", lineHeight: "1.8"
+                }}>
+                  <p><strong>Domain:</strong> {userProfile.domain || <span style={{ color: "red" }}>⚠️ Not set</span>}</p>
+                  <p><strong>Experience:</strong> {userProfile.experience != null && userProfile.experience !== "" ? userProfile.experience : <span style={{ color: "red" }}>⚠️ Not set</span>}</p>
+                  <p><strong>Role:</strong> {userProfile.role || "—"}</p>
+                  {userProfile.resumeURL && <p>✅ Resume uploaded</p>}
+                </div>
+              )}
+
+              {/* Missing profile warning */}
+              {userProfile && (!userProfile.domain || (userProfile.experience == null || userProfile.experience === "")) && (
+                <div className="alert alert-error" style={{ marginTop: "1rem" }}>
+                  ⚠️ Please{" "}
+                  <a href="/profile" style={{ color: "inherit", fontWeight: 700 }}>
+                    complete your profile
+                  </a>{" "}
+                  (domain + experience required) before starting.
+                </div>
+              )}
+
               {mediaError && <div className="alert alert-error">{mediaError}</div>}
               {error && <div className="alert alert-error">{error}</div>}
-              <button className="btn-primary" style={{ marginTop: "1.5rem" }} onClick={handleStart}>
+
+              <button
+                className="btn-primary"
+                style={{ marginTop: "1.5rem" }}
+                onClick={handleStart}
+                disabled={!userProfile?.domain || userProfile?.experience == null || userProfile?.experience === ""}
+              >
                 Start Interview
               </button>
             </div>
@@ -322,8 +371,16 @@ export default function Interview() {
           {inInterview && (
             <>
               <div className="question-card card">
-                <div className="q-meta">
+                <div className="q-meta" style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
                   <span className="badge badge-blue">Question {qIndex}</span>
+                  <span style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
+                    🔄 Adaptive interview · min 8 questions
+                  </span>
+                  {totalTopics > 0 && (
+                    <span style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
+                      📋 {totalTopics} topics from your resume
+                    </span>
+                  )}
                 </div>
                 <h2 style={{ marginTop: "0.75rem", color: "var(--text)", lineHeight: 1.45 }}>{question}</h2>
               </div>
@@ -348,23 +405,12 @@ export default function Interview() {
                 >
                   {uiState === STATES.SUBMITTING ? (
                     <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-                      <span className="spinner-sm" /> Evaluating…
+                      <span className="spinner-sm" />
+                      {qIndex >= 8 ? "Checking topic coverage…" : "Generating next question…"}
                     </span>
                   ) : "Submit Answer →"}
                 </button>
               </div>
-
-              {/* Live transcription panel */}
-              {transcript.length > 0 && (
-                <div className="card" style={{ marginTop: "1rem", maxHeight: 200, overflowY: "auto" }}>
-                  <p style={{ fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--text-muted)" }}>📝 Live Transcription</p>
-                  {transcript.map((t, i) => (
-                    <p key={i} style={{ fontSize: "0.85rem", color: t.interim ? "var(--text-muted)" : "var(--text)", fontStyle: t.interim ? "italic" : "normal", marginBottom: "0.25rem" }}>
-                      {t.interim ? `…${t.text}` : `Q${t.questionIndex}: ${t.text}`}
-                    </p>
-                  ))}
-                </div>
-              )}
             </>
           )}
 

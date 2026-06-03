@@ -36,10 +36,10 @@ const Dashboard = () => {
   return (
     <div className="page-container">
       {/* Header */}
-      <div className="page-header">
+      <div className="page-header" style={{ marginBottom: "3rem" }}>
         <div>
           <h1>Welcome back{user?.firstName ? `, ${user.firstName}` : ""}! 👋</h1>
-          <p>Track your interview practice progress</p>
+          <p style={{ fontSize: "1.1rem", marginTop: "0.5rem", color: "var(--text-muted)" }}>Track your interview practice progress</p>
         </div>
         <Link to="/interview" className="btn-primary" style={{ width: "auto", padding: "0.75rem 1.5rem", textDecoration: "none", borderRadius: 8, display: "inline-block" }}>
           + Start Interview

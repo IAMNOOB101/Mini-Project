@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const features = [
   { icon: "📄", title: "Resume-driven Questions", desc: "Questions tailored to your skills, domain, and target salary — not generic." },
   { icon: "🎙️", title: "Voice & Confidence Analysis", desc: "Real-time speech-to-text and voice confidence scoring while you answer." },
-  { icon: "🧠", title: "AI Evaluation", desc: "Every answer graded on content, clarity and confidence by Gemini 2.0." },
+  { icon: "🧠", title: "AI Evaluation", desc: "Every answer graded on content, clarity and confidence by advanced AI." },
   { icon: "📊", title: "Explainable Reports", desc: "Downloadable PDF with strengths, improvement areas and progress tracking." },
   { icon: "🏛️", title: "Institution Plans", desc: "Bulk access for colleges and bootcamps with per-student pricing." },
   { icon: "🔐", title: "2FA Security", desc: "TOTP authenticator support for Google Authenticator and Authy." },
