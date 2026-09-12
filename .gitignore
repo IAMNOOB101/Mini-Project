@@ -8,3 +8,15 @@ node_modules/
 .env.production
 
 package-lock.json
+
+# Python / Django
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+.pytest_cache/
+.mypy_cache/
+db.sqlite3
+

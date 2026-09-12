@@ -1,0 +1,1 @@
+"""InterviewAI Django package."""

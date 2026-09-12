@@ -100,15 +100,37 @@ const Signup = () => {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       // Fetch TOTP QR
-      const totpRes = await fetch("/api/auth/totp/init", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${data.token}` },
-        credentials: "include",
-      });
-      const totpData = await totpRes.json();
-      setTotpQr(totpData.qrCode);
+      try {
+        const totpRes = await fetch("/api/auth/totp/init", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${data.token}`,
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+        const totpData = await totpRes.json();
+        if (!totpRes.ok) {
+          console.error("TOTP init failed:", totpData);
+          setError(totpData.message || "Failed to generate 2FA QR code");
+          return;
+        }
+        if (totpData.qrCode) {
+          setTotpQr(totpData.qrCode);
+        } else {
+          console.error("No qrCode in TOTP response:", totpData);
+          setError("QR code not returned from server");
+          return;
+        }
+      } catch (totpErr) {
+        console.error("TOTP init fetch error:", totpErr);
+        setError("Failed to initialize 2FA: " + totpErr.message);
+        return;
+      }
+
       setStep(2);
-    } catch {
+    } catch (err) {
+      console.error("Registration error:", err);
       setError("Network error — please try again");
     } finally {
       setLoading(false);
@@ -252,7 +274,7 @@ const Signup = () => {
             <div className="btn-row">
               <button type="button" className="btn-ghost" onClick={() => setStep(0)}>← Back</button>
               <button type="submit" className="btn-primary" disabled={loading}>
-                {loading ? "Creating account…" : "Create Account →"}
+                {loading ? "Creating account…" : "Create Account"}
               </button>
             </div>
           </form>
@@ -260,17 +282,17 @@ const Signup = () => {
 
         {/* ── Step 2: TOTP Setup ── */}
         {step === 2 && (
-          <div className="form-group">
+          <form className="form-group" onSubmit={handleTotpConfirm}>
             <label>Setup Two-Factor Authentication (2FA)</label>
             <p className="text-sm text-gray-600 mb-4">
               Scan this QR code with Google Authenticator or Authy
             </p>
 
             {/* QR Code Display */}
-            {qrCode ? (
+            {totpQr ? (
               <div className="qr-code-container">
                 <img
-                  src={qrCode}
+                  src={totpQr}
                   alt="2FA QR Code"
                   className="qr-code-image"
                 />
@@ -287,15 +309,21 @@ const Signup = () => {
               <input
                 type="text"
                 placeholder="000000"
-                value={totpCode}
-                onChange={(e) => setTotpCode(e.target.value.slice(0, 6))}
+                value={totpToken}
+                onChange={(e) => setTotpToken(e.target.value.slice(0, 6))}
                 className="form-input text-center tracking-widest"
                 maxLength="6"
               />
             </div>
 
-            {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
-          </div>
+            {totpError && <p className="text-red-600 text-sm mt-2">{totpError}</p>}
+            
+            <div className="btn-row mt-4">
+              <button type="submit" className="btn-primary" disabled={totpVerifying}>
+                {totpVerifying ? "Verifying…" : "Confirm & Complete Setup"}
+              </button>
+            </div>
+          </form>
         )}
 
         {step < 2 && (

@@ -9,7 +9,7 @@ export default function App() {
   useEffect(() => {
     const checkServerHealth = async () => {
       try {
-        const response = await fetch("http://localhost:4000/api/health", {
+        const response = await fetch("/api/health", {
           method: "GET",
         });
 

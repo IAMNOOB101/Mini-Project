@@ -1,0 +1,27 @@
+Django==5.0.7
+djangorestframework==3.15.2
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.4.0
+psycopg2-binary
+python-decouple==3.8
+Pillow==10.4.0
+
+# Storage & Files
+cloudinary==1.40.0
+
+# AI / Ollama
+ollama==0.3.3
+
+# PDF parsing
+pypdf==4.3.1
+
+# TOTP / 2FA
+pyotp==2.9.0
+qrcode[pil]==7.4.2
+
+# Payment
+razorpay==1.4.1
+
+# Utilities
+python-dotenv==1.0.1
+requests==2.32.3

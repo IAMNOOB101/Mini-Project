@@ -9,7 +9,7 @@ const Login = () => {
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [totpToken, setTotpToken] = useState("");
-  const [step, setStep] = useState("credentials"); // "credentials" | "totp"
+  const [step, setStep] = useState("email"); // "email" | "totp" | "password"
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -20,9 +20,10 @@ const Login = () => {
     setError("");
     setLoading(true);
     try {
-      const body = step === "totp"
-        ? { ...form, totpToken }
-        : form;
+      let body = {};
+      if (step === "email") body = { email: form.email };
+      else if (step === "totp") body = { email: form.email, totpToken };
+      else if (step === "password") body = { email: form.email, password: form.password };
 
       const res = await fetch("/api/auth/login", {
         method: "POST",
@@ -34,9 +35,13 @@ const Login = () => {
 
       if (!res.ok) return setError(data.message || "Login failed");
 
-      // Server signals TOTP is required
+      // Server signals next required step
       if (data.totpRequired) {
         setStep("totp");
+        return;
+      }
+      if (data.passwordRequired) {
+        setStep("password");
         return;
       }
 
@@ -78,41 +83,59 @@ const Login = () => {
         <div className="auth-header">
           <div className="auth-icon">🎯</div>
           <h1>Welcome Back</h1>
-          {step === "credentials" && <p>Sign in to your InterviewAI account</p>}
+          {step === "email" && <p>Sign in to your InterviewAI account</p>}
           {step === "totp" && <p>Enter the 6-digit code from your Authenticator app</p>}
+          {step === "password" && <p>Enter your password to continue</p>}
         </div>
 
         {successMsg && <div className="alert alert-success">{successMsg}</div>}
 
-        {step === "credentials" && (
+        {step === "email" && (
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
               <label htmlFor="email">Email Address</label>
               <input
                 id="email" name="email" type="email"
                 placeholder="you@example.com"
+                value={form.email}
                 onChange={handleChange} required autoComplete="email"
               />
             </div>
+
+            {error && <div className="alert alert-error">{error}</div>}
+
+            <button type="submit" className="btn-primary" disabled={loading || !form.email}>
+              {loading ? "Checking…" : "Continue"}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/guest-interview")}
+              className="btn-guest"
+            >
+              Continue as Guest
+            </button>
+          </form>
+        )}
+
+        {step === "password" && (
+          <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">Password for {form.email}</label>
               <input
                 id="password" name="password" type="password"
                 placeholder="••••••••"
+                value={form.password}
                 onChange={handleChange} required autoComplete="current-password"
               />
             </div>
 
             {error && <div className="alert alert-error">{error}</div>}
 
-            <button type="submit" className="btn-primary" disabled={loading}>
+            <button type="submit" className="btn-primary" disabled={loading || !form.password}>
               {loading ? "Signing in…" : "Login"}
             </button>
-            <button
-              onClick={() => navigate("/guest-interview")}
-              className="btn-guest"
-            >
-              Continue as Guest
+            <button type="button" className="btn-ghost" onClick={() => { setStep("email"); setError(""); setForm({ ...form, password: "" }); }}>
+              ← Use a different email
             </button>
           </form>
         )}
@@ -139,9 +162,15 @@ const Login = () => {
             <button type="submit" className="btn-primary" disabled={loading || totpToken.length !== 6}>
               {loading ? "Verifying…" : "Verify & Login"}
             </button>
-            <button type="button" className="btn-ghost" onClick={() => { setStep("credentials"); setError(""); setTotpToken(""); }}>
-              ← Back
-            </button>
+            
+            <div className="btn-row" style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+              <button type="button" className="btn-ghost" style={{ flex: 1 }} onClick={() => { setStep("email"); setError(""); setTotpToken(""); }}>
+                ← Back
+              </button>
+              <button type="button" className="btn-ghost" style={{ flex: 1 }} onClick={() => { setStep("password"); setError(""); setTotpToken(""); }}>
+                Use Password Instead
+              </button>
+            </div>
           </form>
         )}
 
